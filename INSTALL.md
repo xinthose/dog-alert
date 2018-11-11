@@ -1,15 +1,24 @@
 # Installation
-## Nativescript
-- Command line Tutorial: https://docs.nativescript.org/start/quick-setup#step-3-install-ios-and-android-requirements
-- Windows Command Prompt (as Adminstrator)
-    - @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://www.nativescript.org/setup/win'))"
-- tns create dog-alert --template tns-template-blank-ng
+
+## Linux Setup
+- Tutorial: https://docs.nativescript.org/start/ns-setup-linux
+- `npm install -g nativescript --unsafe-perm`
+- `tns extension install nativescript-cloud`
+
+## App creation
+- `tns create dog-alert --template tns-template-blank-ng`
+
+### Android phone
+- Enable US Debugging
+    - Tutorial: https://developer.android.com/studio/debug/dev-options 
 
 # Commands
+
 ## Telerik Nativescript (tns)
-- tns doctor    // check for any issues
-- tsc -v  // show typescript version
-- tns run   // run the app
+- `tns login`
+- `tns cloud build`
+- `tns run`   // run the app
+- `tns doctor`    // check for any issues
 
 ## Github
 - git config user.email "adamdunsmoor@pm.me"  // set email address

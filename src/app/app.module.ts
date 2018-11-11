@@ -10,7 +10,7 @@ import { AppComponent } from "./app.component";
     ],
     imports: [
         NativeScriptModule,
-        AppRoutingModule
+        AppRoutingModule,
     ],
     declarations: [
         AppComponent
