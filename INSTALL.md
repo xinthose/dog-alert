@@ -28,8 +28,13 @@
 - `tns login`
 - `tns cloud build`
 - `tns run`   // run the app
+- `tns preview` // preview the app using playground
 - `tns doctor`    // check for any issues
 - `tns build android`   // build app for Android
+    - `tns run android` // run app on connected Android device
+
+## Node package manager (npm)
+- `npm update`  // update all packages
 
 ## Github
 - git config user.email "adamdunsmoor@pm.me"  // set email address

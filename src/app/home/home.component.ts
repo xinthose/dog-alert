@@ -15,43 +15,66 @@ export class HomeComponent implements OnInit {
     connectionType: string;
 
     constructor() {
-        connectivity.startMonitoring((newConnectionType: number) => {
-            switch (newConnectionType) {
-                case connectivity.connectionType.none:
-                    this.connectionType = "None";
-                    console.log("Connection type changed to none.");
-                    break;
-                case connectivity.connectionType.wifi:
-                    this.connectionType = "Wi-Fi";
-                    console.log("Connection type changed to WiFi.");
-                    break;
-                case connectivity.connectionType.mobile:
-                    this.connectionType = "Mobile";
-                    console.log("Connection type changed to mobile.");
-                    break;
-                case connectivity.connectionType.ethernet:
-                    this.connectionType = "Ethernet";
-                    console.log("Connection type changed to ethernet.");
-                    break;
-                case connectivity.connectionType.bluetooth:
-                    this.connectionType = "Bluetooth";
-                    console.log("Connection type changed to bluetooth.");
-                    break;
-                default:
-                    break;
-            }
-        });
+        // connectivity.startMonitoring((newConnectionType: number) => {
+        //     switch (newConnectionType) {
+        //         case connectivity.connectionType.none:
+        //             this.connectionType = "None";
+        //             console.log("Connection type changed to none.");
+        //             break;
+        //         case connectivity.connectionType.wifi:
+        //             this.connectionType = "Wi-Fi";
+        //             console.log("Connection type changed to WiFi.");
+        //             break;
+        //         case connectivity.connectionType.mobile:
+        //             this.connectionType = "Mobile";
+        //             console.log("Connection type changed to mobile.");
+        //             break;
+        //         case connectivity.connectionType.ethernet:
+        //             this.connectionType = "Ethernet";
+        //             console.log("Connection type changed to ethernet.");
+        //             break;
+        //         case connectivity.connectionType.bluetooth:
+        //             this.connectionType = "Bluetooth";
+        //             console.log("Connection type changed to bluetooth.");
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // });
 
-        bluetooth.hasCoarseLocationPermission().then(
-            function (granted) {
-                console.log("Has Location Permission? " + granted);
-                if (granted) {
-                    this.scanBluetooth();
+        bluetooth.isBluetoothEnabled().then(
+            function (enabled) {
+                console.log("Enabled? " + enabled);
+                if (enabled) {
+                    bluetooth.startScanning({
+                        // UUID: '3424-542-4534-53454',
+                        serviceUUIDs: ["0100"],    // L2CAP --> 0100 (https://www.bluetooth.com/specifications/assigned-numbers/service-discovery)
+                        seconds: 900,
+                        onDiscovered: function (peripheral) {
+                            console.log("Periperhal found with UUID: " + peripheral.UUID);
+                        },
+                        skipPermissionCheck: true,
+                    }).then(function () {
+                        console.log("scanning complete");
+                    }, function (err) {
+                        console.log("error while scanning: " + err);
+                    });
                 } else {
-                    this.requestBluetooth()
+                    this.requestBluetooth();
                 }
             }
         );
+
+        // bluetooth.hasCoarseLocationPermission().then(
+        //     function (granted) {
+        //         console.log("Has Location Permission? " + granted);
+        //         if (granted) {
+        //             this.scanBluetooth();
+        //         } else {
+        //             this.requestBluetooth()
+        //         }
+        //     }
+        // );
     }
 
     requestBluetooth() {
@@ -113,9 +136,9 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnDestroy(): void {
-        connectivity.stopMonitoring();
-        bluetooth.stopScanning().then(function () {
-            console.log("scanning stopped");
-        });
+        // connectivity.stopMonitoring();
+        // bluetooth.stopScanning().then(function () {
+        //     console.log("scanning stopped");
+        // });
     }
 }
