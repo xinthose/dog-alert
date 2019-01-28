@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, NgZone } from "@angular/core";
 
 import { connectionType, getConnectionType, startMonitoring, stopMonitoring } from "tns-core-modules/connectivity";
 
@@ -14,7 +14,43 @@ import bluetooth = require('nativescript-bluetooth');
 export class HomeComponent implements OnInit {
     connectionType: string;
 
-    constructor() {
+    constructor(private zone: NgZone) {
+        bluetooth.isBluetoothEnabled().then(
+            function (enabled) {
+                console.log("Enabled? " + enabled);
+                if (enabled) {
+                    bluetooth.startScanning({
+                        // UUID: '3424-542-4534-53454',
+                        serviceUUIDs: ["0100"],    // L2CAP --> 0100 (https://www.bluetooth.com/specifications/assigned-numbers/service-discovery)
+                        seconds: 900,
+                        onDiscovered: function (peripheral) {
+                            this.zone.run(() => {
+                                console.log("Periperhal found with UUID: " + peripheral.UUID);
+                            });
+                        },
+                        skipPermissionCheck: true,
+                    }).then(function () {
+                        console.log("scanning complete");
+                    }, function (err) {
+                        console.log("error while scanning: " + err);
+                    });
+                } else {
+                    this.requestBluetooth();
+                }
+            }
+        );
+
+        // bluetooth.hasCoarseLocationPermission().then(
+        //     function (granted) {
+        //         console.log("Has Location Permission? " + granted);
+        //         if (granted) {
+        //             this.scanBluetooth();
+        //         } else {
+        //             this.requestBluetooth()
+        //         }
+        //     }
+        // );
+
         // connectivity.startMonitoring((newConnectionType: number) => {
         //     switch (newConnectionType) {
         //         case connectivity.connectionType.none:
@@ -42,39 +78,6 @@ export class HomeComponent implements OnInit {
         //     }
         // });
 
-        bluetooth.isBluetoothEnabled().then(
-            function (enabled) {
-                console.log("Enabled? " + enabled);
-                if (enabled) {
-                    bluetooth.startScanning({
-                        // UUID: '3424-542-4534-53454',
-                        serviceUUIDs: ["0100"],    // L2CAP --> 0100 (https://www.bluetooth.com/specifications/assigned-numbers/service-discovery)
-                        seconds: 900,
-                        onDiscovered: function (peripheral) {
-                            console.log("Periperhal found with UUID: " + peripheral.UUID);
-                        },
-                        skipPermissionCheck: true,
-                    }).then(function () {
-                        console.log("scanning complete");
-                    }, function (err) {
-                        console.log("error while scanning: " + err);
-                    });
-                } else {
-                    this.requestBluetooth();
-                }
-            }
-        );
-
-        // bluetooth.hasCoarseLocationPermission().then(
-        //     function (granted) {
-        //         console.log("Has Location Permission? " + granted);
-        //         if (granted) {
-        //             this.scanBluetooth();
-        //         } else {
-        //             this.requestBluetooth()
-        //         }
-        //     }
-        // );
     }
 
     requestBluetooth() {
